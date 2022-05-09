@@ -1,18 +1,20 @@
 <script lang="ts">
 	let ctx: AudioContext;
 
-	function onEngage() {
+	async function onEngage() {
 		ctx = ctx ? ctx : new AudioContext();
-		navigator.getUserMedia(
-			{ video: false, audio: true },
-			(stream: MediaStream) => {
-				var mic = ctx.createMediaStreamSource(stream);
-				const convolver = ctx.createConvolver();
-				convolver.buffer = reverbImpulseResponse(10, 10, false);
-				mic.connect(convolver).connect(ctx.destination);
-			},
-			console.log
-		);
+		const mic = await getLiveAudio(ctx);
+		const convolver = ctx.createConvolver();
+		convolver.buffer = reverbImpulseResponse(10, 10, false);
+		mic.connect(convolver).connect(ctx.destination);
+	}
+
+	async function getLiveAudio(audioCtx: AudioContext) {
+		return navigator.mediaDevices
+			.getUserMedia({
+				audio: true
+			})
+			.then((stream) => audioCtx.createMediaStreamSource(stream));
 	}
 
 	function reverbImpulseResponse(duration: number, decay: number, reverse: boolean) {

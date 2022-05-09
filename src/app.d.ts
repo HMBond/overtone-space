@@ -9,9 +9,11 @@ declare namespace App {
 }
 
 interface Navigator {
-	getUserMedia(
-		options: { video?: bool; audio?: bool },
-		success: (stream: MediaStream) => void,
-		error?: (error: string) => void
-	): void;
+	mediaDevices: {
+		getUserMedia(
+			options: { video?: bool; audio?: bool },
+			success: (stream: MediaStream) => void,
+			error?: (error: string) => void
+		): void;
+	};
 }
