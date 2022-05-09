@@ -1,16 +1,13 @@
 <script lang="ts">
-	import Header from '$lib/header/Header.svelte';
 	import '../app.css';
 </script>
-
-<Header />
 
 <main>
 	<slot />
 </main>
 
 <footer>
-	<p>visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit</p>
+	<p>This <a href="https://github.com/HMBond/overtone-space">space</a> was created by Mike Bond</p>
 </footer>
 
 <style>
@@ -19,9 +16,8 @@
 		display: flex;
 		flex-direction: column;
 		padding: 1rem;
+		height: 100%;
 		width: 100%;
-		max-width: 1024px;
-		margin: 0 auto;
 		box-sizing: border-box;
 	}
 
@@ -30,7 +26,7 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		padding: 40px;
+		padding: 20px;
 	}
 
 	footer a {
