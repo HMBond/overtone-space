@@ -6,10 +6,12 @@ declare namespace App {
 	interface Locals {
 		userid: string;
 	}
+}
 
-	// interface Platform {}
-
-	// interface Session {}
-
-	// interface Stuff {}
+interface Navigator {
+	getUserMedia(
+		options: { video?: bool; audio?: bool },
+		success: (stream: MediaStream) => void,
+		error?: (error: string) => void
+	): void;
 }
