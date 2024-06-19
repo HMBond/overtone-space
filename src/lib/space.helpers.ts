@@ -1,3 +1,4 @@
+import { base } from '$app/paths';
 import * as three from 'three';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
@@ -59,9 +60,11 @@ export function generateStars(amount: number, depth: number): THREE.Points {
 	sizeAttribute.setUsage(three.DynamicDrawUsage);
 	geometry.setAttribute('size', sizeAttribute);
 
+	const spritePath = base + '/sprites/favicon.png';
+
 	const shaderMaterial = new three.ShaderMaterial({
 		uniforms: {
-			pointTexture: { value: new three.TextureLoader().load('/sprites/favicon.png') }
+			pointTexture: { value: new three.TextureLoader().load(spritePath) }
 		},
 		vertexShader: document.getElementById('vertexshader')!.textContent as string,
 		fragmentShader: document.getElementById('fragmentshader')!.textContent as string,
