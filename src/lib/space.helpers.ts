@@ -1,6 +1,6 @@
 import { base } from '$app/paths';
 import * as three from 'three';
-import Stats from 'three/examples/jsm/libs/stats.module';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 
 export function appendVertexScript() {
 	const vertexScript = document.createElement('script');
@@ -21,7 +21,7 @@ export function appendFragmentShaderScript() {
 }
 
 export function appendStats() {
-	const stats = Stats();
+	const stats = new Stats();
 	document.body.appendChild(stats.dom);
 	return stats;
 }
@@ -34,7 +34,7 @@ export function appendRenderer(container: HTMLElement) {
 	return renderer;
 }
 
-export function generateStars(amount: number, depth: number): THREE.Points {
+export function generateStars(amount: number, depth: number): three.Points {
 	const geometry = new three.BufferGeometry();
 	const radius = 1000;
 	const positions = [];
