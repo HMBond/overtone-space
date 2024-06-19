@@ -1,4 +1,5 @@
 <script lang="ts">
+	import GithubLogo from '$lib/assets/GithubLogo.svelte';
 	import '../app.css';
 </script>
 
@@ -7,15 +8,16 @@
 </main>
 
 <footer>
-	<p>This <a href="https://github.com/HMBond/overtone-space">space</a> was created by Mike Bond</p>
+	<GithubLogo />
+	<a href="https://github.com/HMBond/overtone-space">github repository</a>
 </footer>
 
 <style>
 	main {
-		flex: 1;
+		flex-grow: 1;
 		display: flex;
 		flex-direction: column;
-		padding: 1rem;
+		align-items: center;
 		height: 100%;
 		width: 100%;
 		box-sizing: border-box;
@@ -23,10 +25,9 @@
 
 	footer {
 		display: flex;
-		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		padding: 20px;
+		gap: 1rem;
 	}
 
 	footer a {

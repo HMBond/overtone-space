@@ -16,5 +16,6 @@ module.exports = {
 		browser: true,
 		es2017: true,
 		node: true
-	}
+	},
+	rules: { '@typescript-eslint/ban-ts-comment': false }
 };

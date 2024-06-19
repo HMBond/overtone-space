@@ -1,90 +1,72 @@
-<script type="module">
-    export const dev
+<script context="module">
+	import { dev } from '$app/env';
+	import { onMount } from 'svelte';
+	import * as three from 'three';
+	import {
+		appendFragmentShaderScript,
+		appendRenderer,
+		appendStats,
+		appendVertexScript,
+		generateStars
+	} from './space.helpers';
+
+	// we'll load it in dev so that we get hot module replacement...
+	export const hydrate = dev;
 </script>
 
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import * as three from 'three';
+	let container: HTMLElement;
+	const VELOCITY = 10;
+	const Z_DEPTH = 1000;
 
-	onMount(initSpace);
-
-	function initSpace() {
+	onMount(() => {
+		appendVertexScript();
+		appendFragmentShaderScript();
 		const scene = new three.Scene();
-		const camera = getCamera();
-		const renderer = getRenderer();
-		const stars = getStars();
-		scene.add(stars);
-		animate(scene, camera, renderer);
+		const camera = new three.PerspectiveCamera(
+			40,
+			window.innerWidth / window.innerHeight,
+			1,
+			10000
+		);
+		const renderer = appendRenderer(container);
+		const fps = import.meta.env.DEV && appendStats();
 
-		function getCamera(): THREE.PerspectiveCamera {
-			const camera = new three.PerspectiveCamera(
-				60,
-				window.innerWidth / window.innerHeight,
-				1,
-				1000
-			);
-			camera.position.z = 1;
-			camera.rotation.x = Math.PI / 2;
-			return camera;
-		}
+		const frame = animate(scene, camera, renderer, fps);
+		return () => {
+			cancelAnimationFrame(frame);
+		};
+	});
 
-		function getRenderer() {
-			const renderer = new three.WebGLRenderer();
-			renderer.setPixelRatio(window.devicePixelRatio);
-			renderer.setSize(window.innerWidth, window.innerHeight);
-			document.body.appendChild(renderer.domElement);
-			return renderer;
-		}
+	function animate(
+		scene: THREE.Scene,
+		camera: THREE.PerspectiveCamera,
+		renderer: THREE.WebGLRenderer,
+		fps: any | false
+	): number {
+		const newStars = generateStars(10, Z_DEPTH);
+		scene.add(newStars);
 
-		function getStars(): THREE.Points {
-			const geometry = new three.BufferGeometry();
-			const particles = 6000;
-			const radius = 200;
-			const positions = [];
-			const colors = [];
-			const color = new three.Color();
-			const sizes = [];
-			for (let i = 0; i < particles; i++) {
-				positions.push((Math.random() * 2 - 1) * radius);
-				positions.push((Math.random() * 2 - 1) * radius);
-				positions.push((Math.random() * 2 - 1) * radius);
-
-				color.setHSL(0, 1, 1);
-
-				colors.push(1, 1, 1);
-
-				sizes.push(300);
+		// move all stars towards camera and remove when passed
+		for (const child of scene.children) {
+			if (child.position.z > Z_DEPTH) {
+				scene.remove(child);
+			} else {
+				child.position.z += VELOCITY;
 			}
-
-			geometry.setAttribute('position', new three.Float32BufferAttribute(positions, 3));
-			geometry.setAttribute('color', new three.Float32BufferAttribute(colors, 3));
-			const sizeAttribute = new three.Float32BufferAttribute(sizes, 1);
-			sizeAttribute.setUsage(three.DynamicDrawUsage);
-			geometry.setAttribute('size', sizeAttribute);
-
-			const shaderMaterial = new three.ShaderMaterial({
-				uniforms: {
-					pointTexture: { value: new three.TextureLoader().load('sprites/favicon.png') }
-				},
-				blending: three.AdditiveBlending,
-				depthTest: false,
-				transparent: true,
-				vertexColors: true
-			});
-
-			return new three.Points(geometry, shaderMaterial);
 		}
 
-		function animate(
-			scene: THREE.Scene,
-			camera: THREE.PerspectiveCamera,
-			renderer: THREE.WebGLRenderer
-		): FrameRequestCallback {
-			renderer.render(scene, camera);
-			// const id = requestAnimationFrame(animate(scene, camera, renderer));
-			return () => {
-				cancelAnimationFrame(0);
-			};
-		}
+		renderer.render(scene, camera);
+		fps && fps.update();
+		return requestAnimationFrame(() => animate(scene, camera, renderer, fps));
 	}
-</s>
+</script>
+
+<div class="backdrop" bind:this={container} />
+
+<style>
+	.backdrop {
+		position: fixed;
+		z-index: -1;
+	}
+</style>
